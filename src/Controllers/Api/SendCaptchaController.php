@@ -30,7 +30,7 @@ class SendCaptchaController extends Controller
 
             return $this->jsonResponse(['status' => 'SUCCESS']);
         } catch (\Exception $exception) {
-            return $this->jsonResponse(['msg' => trans('email-captcha::email_captcha.send_fail')]);
+            return $this->jsonResponse(['msg' => trans('email-captcha::email_captcha.send_fail')], 422);
         }
     }
 }

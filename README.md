@@ -27,3 +27,33 @@ $ composer require jncinet/laravel-email-captcha
 + 参数：{"email": 'username@qihucms.com'}
 + 成功：{"status": "SUCCESS"}
 + 失败：{"errors":{"msg": "发送失败"},...}
+
+## 示例
+```
+        function emailCaptcha(email) {
+            var pattern = /^[A-Za-zd0-9]+([-_.][A-Za-zd]+)*@([A-Za-zd]+[-.])+[A-Za-zd]{2,8}$/;
+            if(!pattern.test(email)){
+                $.toast("邮箱号有误，请重新填写", 'text');
+                return false;
+            }
+            axios.post('{{ route('email.captcha') }}', {email})
+                .then(function (response) {
+                    $.toast('发送成功');
+                    updateSendCaptchaText();
+                })
+                .catch(function (error) {
+                    if (error.response.status === 422) {
+                        var errors = error.response.data.errors, msg;
+                        for (var i in errors) {
+                            msg = errors[i][0]
+                        }
+                        $.toast(msg, 'text');
+                    } else {
+                        $.toast('发送失败', 'cancel');
+                    }
+                    clearInterval(c);
+                    $('#sendCaptcha').text('发送验证码');
+                    t = 0;
+                });
+        }
+```
