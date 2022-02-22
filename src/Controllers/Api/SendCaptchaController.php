@@ -28,9 +28,17 @@ class SendCaptchaController extends Controller
             // 发邮件验证码
             Mail::to($email)->send(new UserRegistering($code, $email));
 
-            return $this->jsonResponse(['status' => 'SUCCESS']);
+            return response()->json([
+                'msg' => trans('email-captcha::email_captcha.send_successfully'),
+                'status' => 'SUCCESS',
+            ]);
         } catch (\Exception $exception) {
-            return $this->jsonResponse(['msg' => trans('email-captcha::email_captcha.send_fail')], 422);
+            return response()->json([
+                'errors' => [
+                    'msg' => trans('email-captcha::email_captcha.send_fail'),
+                ],
+                'status' => 'ERROR',
+            ], 422);
         }
     }
 }

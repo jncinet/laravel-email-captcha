@@ -33,26 +33,30 @@ $ composer require jncinet/laravel-email-captcha
         function emailCaptcha(email) {
             var pattern = /^[A-Za-zd0-9]+([-_.][A-Za-zd]+)*@([A-Za-zd]+[-.])+[A-Za-zd]{2,8}$/;
             if(!pattern.test(email)){
-                $.toast("邮箱号有误，请重新填写", 'text');
+                $.toast("@lang('email-captcha::email_captcha.email_error')", 'text');
                 return false;
             }
             axios.post('{{ route('email.captcha') }}', {email})
                 .then(function (response) {
-                    $.toast('发送成功');
+                    $.toast(response.data.msg);
                     updateSendCaptchaText();
                 })
                 .catch(function (error) {
                     if (error.response.status === 422) {
                         var errors = error.response.data.errors, msg;
-                        for (var i in errors) {
-                            msg = errors[i][0]
+                        if (errors.length > 0) {
+                            for (var i in errors) {
+                                msg = errors[i][0];
+                            }
+                        } else {
+                            msg = error.response.data.msg;
                         }
                         $.toast(msg, 'text');
                     } else {
-                        $.toast('发送失败', 'cancel');
+                        $.toast("@lang('email-captcha::email_captcha.send_fail')", 'cancel');
                     }
                     clearInterval(c);
-                    $('#sendCaptcha').text('发送验证码');
+                    $('#sendCaptcha').text("@lang('email-captcha::email_captcha.send_btn_text')");
                     t = 0;
                 });
         }
